@@ -1,0 +1,2 @@
+#!/bin/bash
+rdesktop -P -r clipboard:PRIMARYCLIPBOARD -r sound:local:alsa -g 1280x800 -E -z -P -0 -u user -p pass windowspc:3389 > /dev/null 2>&1 &
