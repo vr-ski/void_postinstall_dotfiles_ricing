@@ -1,0 +1,215 @@
+transparent_light_grey: &transparent_light_grey bac2deaa
+transparent_black: &transparent_black 45475aaa
+
+mono: &mono Hack Nerd Font:pixelsize=20
+prop: &prop Liberation Sans:pixelsize=16
+hack: &hack Hack:pixelsize=16
+awesome: &awesome Font Awesome 6 Free:style=solid:pixelsize=16
+
+black: &black 000000cc # 202328dd
+white: &white dfdfdfcc # eeeeeecc
+grey: &grey aaaaaabb
+yellow: &yellow ead61cbb
+red: &red bc4b4bbb
+green: &green 4c9178bb
+blue: &blue 4c6691bb
+purple: &purple 7d556cbb
+dark_grey: &dark_grey 45475aff
+light_grey: &light_grey bac2deff
+dark_red: &dark_red f38ba8ff
+
+default: &default {stack: [{background: {color: *black}}, {underline: {size: 2, color: *white}}]}
+urgent: &urgent {stack: [{background: {color: *red}}, {underline: {size: 4, color: *yellow}}]}
+
+separator: &separator { string: { text: "", font: *mono, foreground: *grey } }
+
+bar:
+  height: 30
+  location: top
+  font: *prop
+  layer: top
+  foreground: *white
+  background: *black
+  border:
+    bottom-margin: 4
+    top-margin: 1
+    left-margin: 2
+    right-margin: 2
+    width: 0
+
+  left:
+    - river:
+        anchors:
+          - base: &river_base
+              left-margin: 26
+              right-margin: 26
+              text: "{id}"
+        content:
+          map:
+            on-click:
+              left: sh -c "riverctl set-focused-tags $((1 << ({id} - 1)))"
+              middle: sh -c "riverctl toggle-view-tags $((1 << ({id} -1)))"
+              right: sh -c "riverctl toggle-focused-tags $((1 << ({id} -1)))"
+            conditions:
+              urgent:
+                string:
+                  <<: *river_base
+                  deco: {stack: [{background: {color: *dark_red}}, {border: {size: 6, color: *black}}]}
+                  foreground: *black
+              focused:
+                string:
+                  <<: *river_base
+                  deco: {stack: [{background: {color: *light_grey}}, {underline: {size: 6, color: *transparent_black}}]}
+                  foreground: *dark_grey
+              visible && occupied:
+                string:
+                  <<: *river_base
+                  deco: {stack: [{background: {color: *transparent_light_grey}}, {underline: {size: 6, color: *transparent_black}}]}
+                  foreground: *light_grey
+              visible && ~occupied:
+                string:
+                  <<: *river_base
+                  deco: {stack: [{background: {color: *transparent_light_grey}}, {underline: {size: 6, color: *transparent_black}}]}
+                  foreground: *light_grey
+              ~visible && occupied:
+                string:
+                  <<: *river_base
+                  deco: {stack: [{background: {color: *dark_grey}}, {underline: {size: 6, color: *transparent_light_grey}}]}
+                  foreground: *light_grey
+              ~focused && occupied:
+                string:
+                  <<: *river_base
+                  deco: {stack: [{background: {color: *dark_grey}}, {underline: {size: 6, color: *transparent_light_grey}}]}
+                  foreground: *light_grey
+              id < 10 && ~visible && ~occupied:
+                string:
+                  <<: *river_base
+                  foreground: *light_grey
+              id >= 10 && ~visible && ~occupied: {empty: {}}
+    - label:
+        content: *separator
+    - foreign-toplevel:
+        content:
+          map:
+            margin: 6
+            conditions:
+              ~activated: {empty: {}}
+              activated:
+                - string:
+                    max: 30
+                    text: "{app-id}: {title}"
+  right:
+    - mpd:
+        host: "/home/username/.config/mpd/mpd.socket"
+        content:
+          string: {text: "{artist} - {title} : {end}"}
+    - label:
+        content: *separator
+    - cpu:
+        poll-interval: 3000
+        content:
+          map:
+            conditions:
+              id == -1:
+                - string: { text: , font: *hack }
+                - string: { text: " {cpu}%" }
+    - label:
+        content: *separator
+    - mem:
+        poll-interval: 7000
+        content:
+          - string: { text: , font: *hack }
+          - string: { text: " {used:gb} GB" }
+    - label:
+        content: *separator
+    - network:
+        poll-interval: 6000
+        spacing: 2
+        content:
+          map:
+            margin: 6
+            font: *mono
+            default: {empty: {}}
+            conditions:
+              name >= enp0s0 && name <= enp9s9:
+                map:
+                  conditions:
+                    ~carrier: { empty: {} }
+                    carrier:
+                      map:
+                        default:
+                          - string:
+                              text: "{name}"
+                              font: *prop
+                        conditions:
+                          state == down:
+                            list:
+                              spacing: 8
+                              items:
+                                - string:
+                                    text: 󱡺
+                                - string:
+                                    text: "{name}"
+                                    font: *prop
+                          state == up:
+                            - string:
+                                text: 󰈀
+                            - string:
+                                text: "{name}"
+                                font: *prop
+              name >= wlp0s0 && name <= wlp9s9:
+                map:
+                  conditions:
+                    ~carrier: {empty: {}}
+                    carrier:
+                      map:
+                        conditions:
+                          state == down:
+                            - string:
+                                text: 󰤮
+                          state == up:
+                            list:
+                              spacing: 8
+                              items:
+                                - ramp:
+                                    tag: quality
+                                    items:
+                                      - string:
+                                          text: 󰤯
+                                      - string:
+                                          text: 󰤟
+                                      - string:
+                                          text: 󰤢
+                                      - string:
+                                          text: 󰤥
+                                      - string:
+                                          text: 󰤨
+                                - string:
+                                    text: "{name}: {quality}%"
+                                    font: *prop
+    - label:
+        content: *separator
+    - clock:
+        date-format: "%a %b %d"
+        time-format: "%R"
+        content:
+          list:
+            margin: 6
+            spacing: 6
+            items:
+              - string:
+                  text: 󰃶
+              - string:
+                  text: "{date}"
+                  font: *prop
+              - string:
+                  text: 󰥔
+              - string:
+                  text: "{time}"
+                  font: *prop
+    - label:
+        content: *separator
+    - alsa:
+        card: hw:PCH
+        mixer: Master
+        content: {string: {text: "🔊{volume} "}}

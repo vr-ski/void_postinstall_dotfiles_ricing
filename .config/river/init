@@ -1,0 +1,141 @@
+#!/bin/bash
+
+
+### 1. Layout setup ###
+
+# Set the default layout generator to be rivertile and start it.
+# River will send the process group of the init executable SIGTERM on exit.
+riverctl default-layout rivertile
+rivertile -view-padding 5 -outer-padding 5 -main-ratio 0.5 &
+riverctl send-layout-cmd rivertile "main-count 3"
+riverctl send-layout-cmd rivertile "main-horizontal"
+
+# Focus follows mouse
+riverctl focus-follows-cursor normal
+
+# Let the cursor follow focused screen
+riverctl set-cursor-warp on-focus-change
+
+# Atatch new windows at the bottom of the stack
+riverctl attach-mode bottom
+
+# Set specific applications to always be in master area
+riverctl rule-add -app-id "firefox" -send-to-main
+riverctl rule-add -app-id "foot" -send-to-main
+riverctl rule-add -app-id "textadept" -send-to-main
+riverctl rule-add -title "Mozilla Firefox" -send-to-main
+
+
+### 2. Keyboard setup and mappings ###
+
+# Keyboard
+riverctl keyboard-layout -options "grp:lalt_lshift_toggle" "us,bg"
+
+# Essential key bindings
+riverctl map normal Super Return spawn "foot"
+riverctl map normal Super F spawn "firefox"
+riverctl map normal Super A spawn "alacritty"
+riverctl map normal Super D spawn "fuzzel"
+riverctl map normal Super Q close
+riverctl map normal Super+Shift Q exit
+riverctl map normal Super+Shift 1 set-view-tags 1
+riverctl map normal Super+Shift 2 set-view-tags 2
+riverctl map normal Super F toggle-float
+riverctl map normal Super Space zoom  # Focus top window
+
+# Volume control with Super+F1/F2
+riverctl map normal Super F1 spawn "amixer -q set Master 5%-"
+riverctl map normal Super F2 spawn "amixer -q set Master 5%+"
+riverctl map normal Super F3 spawn "amixer -q set Master toggle"  # Mute
+
+# Area screenshot with notification
+riverctl map normal Super Print spawn 'grim -g "$(slurp)" ~/Pictures/screenshot-$(date +"%Y%m%d%H%M%S").png'
+
+# Area to clipboard with notification
+riverctl map normal None Print spawn 'grim -g "$(slurp)" - | wl-copy'
+
+# Tiling layout control
+riverctl map normal Super T spawn "riverctl send-layout-cmd rivertile 'main-ratio -0.05'"
+riverctl map normal Super+Shift T spawn "riverctl send-layout-cmd rivertile 'main-ratio +0.05'"
+
+# Promote to or demote from master area
+riverctl map normal Super+Shift M spawn "riverctl send-layout-cmd rivertile 'main-count +1'"
+riverctl map normal Super+Shift N spawn "riverctl send-layout-cmd rivertile 'main-count -1'"
+
+# Adjust master area size
+riverctl map normal Super+Shift Equal spawn "riverctl send-layout-cmd rivertile 'main-ratio +0.05'"
+riverctl map normal Super+Shift Minus spawn "riverctl send-layout-cmd rivertile 'main-ratio -0.05'"
+
+# Focus navigation (essential for tiling)
+riverctl map normal Super J focus-view next
+riverctl map normal Super K focus-view previous
+riverctl map normal Super H focus-view left
+riverctl map normal Super L focus-view right
+
+# Swap windows in tiling layout
+riverctl map normal Super+Shift J swap next
+riverctl map normal Super+Shift K swap previous
+
+# Move and resize windows
+riverctl map-pointer normal Super BTN_LEFT move-view
+riverctl map-pointer normal Super BTN_RIGHT resize-view
+
+# Alt + Tab switching
+riverctl map normal Alt Tab focus-view next
+riverctl map normal Alt+Shift Tab focus-view previous
+
+# Workspace/Tag mappings - Super + 1-9
+# Tag 1 (value: 1)
+riverctl map normal Super 1 set-focused-tags 1
+riverctl map normal Super+Shift 1 set-view-tags 1
+# Tag 2 (value: 2)
+riverctl map normal Super 2 set-focused-tags 2
+riverctl map normal Super+Shift 2 set-view-tags 2
+# Tag 3 (value: 4)
+riverctl map normal Super 3 set-focused-tags 4
+riverctl map normal Super+Shift 3 set-view-tags 4
+# Tag 4 (value: 8)
+riverctl map normal Super 4 set-focused-tags 8
+riverctl map normal Super+Shift 4 set-view-tags 8
+# Tag 5 (value: 16)
+riverctl map normal Super 5 set-focused-tags 16
+riverctl map normal Super+Shift 5 set-view-tags 16
+# Tag 6 (value: 32)
+riverctl map normal Super 6 set-focused-tags 32
+riverctl map normal Super+Shift 6 set-view-tags 32
+# Tag 7 (value: 64)
+riverctl map normal Super 7 set-focused-tags 64
+riverctl map normal Super+Shift 7 set-view-tags 64
+# Tag 8 (value: 128)
+riverctl map normal Super 8 set-focused-tags 128
+riverctl map normal Super+Shift 8 set-view-tags 128
+# Tag 9 (value: 256)
+riverctl map normal Super 9 set-focused-tags 256
+riverctl map normal Super+Shift 9 set-view-tags 256
+
+
+### 3. Background apps and commands ###
+
+# Background apps
+riverctl spawn "swaybg -i ~/Pictures/wallpaper.jpg"
+riverctl spawn "yambar"
+
+# Tags 2
+riverctl spawn "riverctl set-focused-tags 2 && lite-xl"
+riverctl spawn "sleep 0.4s && riverctl set-focused-tags 2 && pcmanfm"
+riverctl spawn "sleep 0.5s && riverctl set-focused-tags 2 && alacritty"
+
+# Tags 4
+riverctl spawn "sleep 1s && riverctl set-focused-tags 4 && textadept"
+riverctl spawn "sleep 1.1s && riverctl set-focused-tags 4 && keepassxc"
+
+# Return to Tags 1
+riverctl spawn "sleep 2s && riverctl set-focused-tags 1"
+riverctl spawn "sleep 2.2s && firefox"
+riverctl spawn "sleep 3.5s && foot"
+
+# Set initial volume
+(amixer -q set Master 30) &
+
+# Mount NAS drives and run mpd
+(sleep 20s && doas mount -a && mpd) &
