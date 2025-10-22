@@ -63,3 +63,6 @@ printf '//truenas/games/ /mnt/games cifs credentials=/etc/smb-credentials,uid=10
 
 # Install oh-my-zsh
 sh -c "$(wget -O- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+
+# Install neovim plugins
+sh -c "./postinstall-neovim.sh"
