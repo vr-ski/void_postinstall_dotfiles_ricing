@@ -18,7 +18,7 @@ fi
 set -u
 
 # Install packages
-xbps-install vpm neovim opendoas keepassxc psmisc zsh nnn fff tlp git wget btop dejavu-fonts-ttf font-inconsolata-otf noto-fonts-ttf font-awesome6 nerd-fonts-symbols-ttf wqy-microhei alsa-utils cifs-utils rdesktop ffmpeg6 mpv mpd mpc tmux mesa-dri mesa-vaapi intel-video-accel mesa-vulkan-intel intel-media-driver libva-utils glxinfo river elogind seatd wlroots yambar fuzzel swaybg swayimg grim slurp foot alacritty textadept lite-xl pcmanfm firefox zathura zathura-pdf-poppler
+xbps-install vpm neovim opendoas keepassxc psmisc zsh nnn fff tlp git wget btop dejavu-fonts-ttf font-inconsolata-otf noto-fonts-ttf font-awesome6 nerd-fonts-symbols-ttf wqy-microhei alsa-utils cifs-utils rdesktop ffmpeg6 mpv mpd mpc tmux mesa-dri mesa-vaapi intel-video-accel mesa-vulkan-intel intel-media-driver libva-utils glxinfo river wlr-randr elogind seatd wlroots yambar fuzzel swaybg swayimg grim slurp foot alacritty textadept lite-xl pcmanfm firefox zathura zathura-pdf-poppler
 
 # Add river launcher to /etc/profile
 printf '\nif [ "$(tty)" = "/dev/tty1" ]; then \n        export XDG_RUNTIME_DIR=/tmp/river-runtime\n        export MOZ_ENABLE_WAYLAND=1\n        export WINIT_UNIX_BACKEND=wayland\n        export TERM=xterm\n        mkdir -p "${XDG_RUNTIME_DIR}"\n        chmod 700 "${XDG_RUNTIME_DIR}"\n\n        exec dbus-run-session river\nfi\n' >> /etc/profile

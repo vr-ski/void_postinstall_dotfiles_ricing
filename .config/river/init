@@ -134,6 +134,9 @@ riverctl spawn "sleep 2s && riverctl set-focused-tags 1"
 riverctl spawn "sleep 2.2s && firefox"
 riverctl spawn "sleep 3.5s && foot"
 
+#Set resolution
+(wlr-randr --output DP-1 --on --mode 2560x1080@74.990997) &
+
 # Set initial volume
 (amixer -q set Master 30) &
 
