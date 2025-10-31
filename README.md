@@ -31,7 +31,7 @@ This repository contains my personal post-installation setup for Void Linux, fea
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/yourusername/void_postinstall_dotfiles_ricing
+   git clone https://github.com/vr-ski/void_postinstall_dotfiles_ricing
    cd void_postinstall_dotfiles_ricing
    ```
 
