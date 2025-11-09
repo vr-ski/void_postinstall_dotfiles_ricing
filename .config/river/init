@@ -49,9 +49,11 @@ riverctl map normal Super F2 spawn "amixer -q set Master 5%+"
 riverctl map normal Super F3 spawn "amixer -q set Master toggle"  # Mute
 
 # Area screenshot with notification
+# shellcheck disable=SC2016
 riverctl map normal Super Print spawn 'grim -g "$(slurp)" ~/Pictures/screenshot-$(date +"%Y%m%d%H%M%S").png'
 
 # Area to clipboard with notification
+# shellcheck disable=SC2016
 riverctl map normal None Print spawn 'grim -g "$(slurp)" - | wl-copy'
 
 # Tiling layout control
