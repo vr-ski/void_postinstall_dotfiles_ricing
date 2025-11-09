@@ -1,34 +1,34 @@
 #!/bin/bash
 set -euxo pipefail
 
-printf "🚀 Setting up Neovim plugins...\n"
+printf '🚀 Setting up Neovim plugins...\n'
 
 # Function to check command success
 check_success() {
     if [ $? -eq 0 ]; then
-        printf "✅ $1\n"
+        printf '✅ %s\n' "$1"
     else
-        printf "❌ $1 failed!\n"
+        printf '❌ %s failed!\n' "$1"
         exit 1
     fi
 }
 
 # Install vim-plug
 if [ ! -f ~/.local/share/nvim/site/autoload/plug.vim ]; then
-    printf "📥 Installing vim-plug...\n"
-    mkdir -vp '~/.local/share/nvim/site/autoload/'
+    printf '📥 Installing vim-plug...\n'
+    mkdir -vp -- ~/'.local/share/nvim/site/autoload/'
     wget -q --show-progress -O ~/.local/share/nvim/site/autoload/plug.vim \
         https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
     check_success "vim-plug installation"
 fi
 
 # Clean, install, and update plugins
-printf "🔧 Setting up plugins...\n"
+printf '🔧 Setting up plugins...\n'
 nvim --headless +PlugClean! +PlugInstall +PlugUpdate +qa
-check_success "Plugin installation"
+check_success 'Plugin installation'
 
 # Optional: Install coc.nvim extensions
-printf "📦 Setting up coc.nvim extensions...\n"
-nvim --headless "+CocInstall -sync coc-json coc-tsserver" +qa 2>/dev/null || true
+printf '📦 Setting up coc.nvim extensions...\n'
+nvim --headless '+CocInstall -sync coc-json coc-tsserver' +qa 2>/dev/null || true
 
-printf "🎉 Neovim setup complete! All plugins installed.\n"
+printf '🎉 Neovim setup complete! All plugins installed.\n'
